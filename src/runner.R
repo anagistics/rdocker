@@ -1,0 +1,6 @@
+library(plumber)
+
+plumb("rservice.R") %>%
+  pr_run(host = "0.0.0.0", port = 3000)
+
+
