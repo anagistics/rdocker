@@ -1,4 +1,4 @@
-FROM rhub/r-minimal
+FROM rhub/r-minimal:4.1.0
 
 RUN apk add --no-cache --update-cache \
         --repository http://nl.alpinelinux.org/alpine/v3.11/main \
@@ -15,7 +15,7 @@ RUN apk add --no-cache --update-cache \
           
 WORKDIR /usr/src/app
 
-COPY src/* ./
+COPY src/*.R ./
 
 EXPOSE 3000
 
