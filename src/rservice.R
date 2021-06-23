@@ -43,15 +43,26 @@ function(column = "", species = "") {
   return(data)
 }
 
-#* Get column names of table
-#* @serializer json
-#* @get /iris/columns
-function() {
+query <- function(sql) {
   con <- get_conn()
-  res <- dbSendQuery(con, "select column_name from information_schema.columns where table_name = 'iris'")
+  res <- dbSendQuery(con, sql)
   data <- dbFetch(res)
   dbClearResult(res)
   dbDisconnect(con)
   return(data)
+}
+
+#* Get column names of table
+#* @serializer json
+#* @get /iris/columns
+function() {
+  "select column_name from information_schema.columns where table_name='iris' and lower(column_name) != 'species'" |> query()
+}
+
+#* Get list of species
+#* @serializer json
+#* @get /iris/species
+function() {
+  "select distinct species from iris" |> query()
 }
 
