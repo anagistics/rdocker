@@ -19,6 +19,8 @@ COPY src/*.R ./
 
 EXPOSE 3000
 
+ENV DBPASS 123456
+
 ENTRYPOINT ["Rscript", "/usr/src/app/runner.R"]
 
 

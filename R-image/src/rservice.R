@@ -16,7 +16,7 @@ function(req, res) {
 
 get_conn <- function() {
   return(dbConnect(RPostgres::Postgres(), dbname = "andreas_db",
-		   host = "172.17.0.1", port = 6666, 
+		   host = Sys.getenv("DBHOST"), port = 6666, 
 		   user = "postgres", password = Sys.getenv("DBPASS")))
 }
 

@@ -1,0 +1,28 @@
+version: '3'
+services:
+        RAPI:
+                image: registry.digitalocean.com/carand-contreg/rminimal
+                build:
+                        context: ./R-image
+                        dockerfile: Dockerfile
+                container_name: r-api
+                ports:
+                        - "3000:3000"
+                environment:
+                        - DBPASS=${DBPASS}
+                        - DBHOST=DB
+                restart: "no"
+
+        DB:
+                image: registry.digitalocean.com/carand-contreg/pgservice
+                build:
+                        context: ./PG-image
+                        dockerfile: Dockerfile
+                container_name: postgressive
+                ports:
+                        - "6666:5432"
+                environment:
+                        - POSTGRES_PASSWORD=${DBPASS}
+                        - POSTGRES_DB=andreas_db
+                volumes:
+                        - /root/lab/pgdata:/var/lib/postgresql/data
