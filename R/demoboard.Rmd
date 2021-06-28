@@ -1,0 +1,72 @@
+---
+title: "Iris Web Demo"
+output: 
+  flexdashboard::flex_dashboard:
+    theme:
+      version: 4
+      bootswatch: cyborg
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(httr)
+library(jsonlite)
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+
+```
+
+```{r helpers}
+server <- "http://carand-main"
+port <- "3000"
+
+the_species <- function() {
+  res <- httr::GET(url = server, port = port, path = "iris/species")
+  fromJSON(rawToChar(res$content)) %>% pull(species)
+}
+
+the_properties <- function() {
+  res <- httr::GET(url = server, port = port, path = "iris/columns")
+  fromJSON(rawToChar(res$content)) %>% pull(column_name)
+}
+
+retrieve <- function(spec, prop) {
+  res <- httr::GET(url = server, port = port, path = "iris", 
+                   query = list(column = prop, species = spec))
+  fromJSON(rawToChar(res$content)) %>% pull()
+}
+```
+
+Inputs {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+ selectInput("Species", label = "Iris species", 
+    choices = the_species(), 
+    selected = the_species()[[1]])
+```
+
+```{r}
+ selectInput("Property", label = "Property", 
+    choices = the_properties(), 
+    selected = the_properties()[[1]])
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Histogram of selected property
+
+```{r}
+idata <- reactive(tibble(Values = retrieve(input$Species, input$Property)))
+
+renderPlot({
+    idata() %>% ggplot(aes(x = Values)) + geom_histogram(fill = "lightblue") 
+})
+
+```
+
